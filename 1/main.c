@@ -32,6 +32,16 @@ For example:
 - R5, L5, R5, R3 leaves you 12 blocks away.
 
 How many blocks away is Easter Bunny HQ?
+
+--- Part Two ---
+
+ Then, you notice the instructions continue on the back of the Recruiting
+Document. Easter Bunny HQ is actually at the first location you visit twice.
+
+For example, if your instructions are R8, R4, R4, R8, the first location you
+visit twice is 4 blocks away, due East.
+
+How many blocks away is the first location you visit twice?
 */
 
 // Example instruction string: "L5, R1, R4, L5, L4, R3, R1, L1, R4, R5, L1, L3, R4, L2, L4, R2, L4, L1, R3, R1, R1, L1, R1, L5, R5, R2, L5, R2, R1, L2, L4, L4, R191, R2, R5, R1, L1, L2, R5, L2, L3, R4, L1, L1, R1, R50, L1, R1, R76, R5, R4, R2, L5, L3, L5, R2, R1, L1, R2, L3, R4, R2, L1, L1, R4, L1, L1, R185, R1, L5, L4, L5, L3, R2, R3, R1, L5, R1, L3, L2, L2, R5, L1, L1, L3, R1, R4, L2, L1, L1, L3, L4, R5, L2, R3, R5, R1, L4, R5, L3, R3, R3, R1, R1, R5, R2, L2, R5, L5, L4, R4, R3, R5, R1, L3, R1, L2, L2, R3, R4, L1, R4, L1, R4, R3, L1, L4, L1, L5, L2, R2, L1, R1, L5, L3, R4, L1, R5, L5, L5, L1, L3, R1, R5, L2, L4, L5, L1, L1, L2, R5, R5, L4, R3, L2, L1, L3, L4, L5, L5, L2, R4, R3, L5, R4, R2, R1, L5";
@@ -39,11 +49,27 @@ How many blocks away is Easter Bunny HQ?
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdbool.h>
+
+struct Point {
+  int x;
+  int y;
+};
+
+bool eq_points(struct Point p1, struct Point p2)
+{
+  return p1.x == p2.x && p1.y == p2.y;
+}
 
 int mod(int a, int b)
 {
     int r = a % b;
     return r < 0 ? r + b : r;
+}
+
+int dist_to_point(struct Point p)
+{
+  return abs(p.x) + abs(p.y);
 }
 
 int main(int argc, char* argv[])
@@ -54,13 +80,16 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  int px = 0; int py = 0;
+  char* instrs = argv[1];
+
+  struct Point pos = { 0, 0 };
 
   // dir: 0 = NORTH, 1 = EAST, 2 = SOUTH, 3 = WEST
   int dir = 0;
 
-  char* instrs = argv[1];
-
+  size_t trail_length = 1;
+  struct Point * trail = malloc(trail_length * sizeof(struct Point));
+  trail[0] = pos;
 
   while (1)
   {
@@ -98,24 +127,50 @@ int main(int argc, char* argv[])
 
       printf("Got distance %d.\n", dist);
 
-      switch (dir) {
-        case 0: py -= dist; break;
-        case 1: px += dist; break;
-        case 2: py += dist; break;
-        case 3: px -= dist; break;
-        default:
-          fprintf(stderr, "Error: invalid direction %d.\n", dir);
-          return 1;
-      }
+      for (int i = 0; i < dist; i++)
+      {
+        switch (dir)
+        {
+          case 0: pos.y -= 1; break;
+          case 1: pos.x += 1; break;
+          case 2: pos.y += 1; break;
+          case 3: pos.x -= 1; break;
+          default:
+            fprintf(stderr, "Error: invalid direction %d.\n", dir);
+            return 1;
+        }
 
-      printf("Walked to (%d,%d).\n", px, py);
+        trail_length++;
+        trail = realloc(trail, trail_length * sizeof(struct Point));
+        trail[trail_length-1].x = pos.x;
+        trail[trail_length-1].y = pos.y;
+
+        printf("Walked to (%d,%d).\n", pos.x, pos.y);
+      }
     }
-    else {
+    else
+    {
       fprintf(stderr, "Unrecognized character in string: %c\n", next);
       return 1;
     }
   }
 
-  printf("We've walked to (%d,%d) which is %d steps away.\n", px, py, abs(px)+abs(py));
+  printf("We walked to (%d,%d), which is %d steps away.\n", pos.x, pos.y, dist_to_point(pos));
+
+  printf("Checking for repeated visits.\n");
+  for (size_t i = 0; i < trail_length; i++)
+  {
+    for (size_t j = 0; j < i; j++)
+    {
+      if (eq_points(trail[j], trail[i]))
+      {
+        printf("The first place we visited twice is (%d,%d), which is %d blocks away.\n", trail[i].x, trail[i].y, dist_to_point(trail[i]));
+        goto end;
+      }
+    }
+  }
+  printf("We visited nowhere twice!\n");
+  end:
+
   return 0;
 }
