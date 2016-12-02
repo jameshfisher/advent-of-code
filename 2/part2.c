@@ -86,6 +86,48 @@ code?
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+
+char pad[7][7] = {
+  { ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
+  { ' ', ' ', ' ', '1', ' ', ' ', ' ' },
+  { ' ', ' ', '2', '3', '4', ' ', ' ' },
+  { ' ', '5', '6', '7', '8', '9', ' ' },
+  { ' ', ' ', 'A', 'B', 'C', ' ', ' ' },
+  { ' ', ' ', ' ', 'D', ' ', ' ', ' ' },
+  { ' ', ' ', ' ', ' ', ' ', ' ', ' ' }
+};
+
+int x = 1;
+int y = 3;
+
+FILE* fp;
+
+void go()
+{
+  char chr = fgetc(fp);
+
+  if (chr == EOF)
+  {
+    return;
+  }
+
+  switch (chr)
+  {
+    case '\n':
+      printf("%c", pad[y][x]);
+      break;
+    case 'L': if (pad[y][x-1] != ' ') { x--; } break;
+    case 'R': if (pad[y][x+1] != ' ') { x++; } break;
+    case 'U': if (pad[y-1][x] != ' ') { y--; } break;
+    case 'D': if (pad[y+1][x] != ' ') { y++; } break;
+    default:
+      fprintf(stderr, "Unexpected character in instructions: %c\n", chr);
+      exit(1);
+  }
+
+  go();
+}
 
 int main(int argc, char* argv[])
 {
@@ -95,7 +137,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  FILE* fp = fopen(argv[1], "r");
+  fp = fopen(argv[1], "r");
 
   if (fp == NULL)
   {
@@ -103,44 +145,8 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  char pad[7][7] = {
-    { ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-    { ' ', ' ', ' ', '1', ' ', ' ', ' ' },
-    { ' ', ' ', '2', '3', '4', ' ', ' ' },
-    { ' ', '5', '6', '7', '8', '9', ' ' },
-    { ' ', ' ', 'A', 'B', 'C', ' ', ' ' },
-    { ' ', ' ', ' ', 'D', ' ', ' ', ' ' },
-    { ' ', ' ', ' ', ' ', ' ', ' ', ' ' }
-  };
-
-  int x = 1;
-  int y = 3;
-
   printf("The code is: ");
-  while (true)
-  {
-    char chr = fgetc(fp);
-
-    if (chr == EOF)
-    {
-      break;
-    }
-    else
-    {
-      switch (chr) {
-        case '\n':
-          printf("%c", pad[y][x]);
-          break;
-        case 'L': if (pad[y][x-1] != ' ') { x--; } break;
-        case 'R': if (pad[y][x+1] != ' ') { x++; } break;
-        case 'U': if (pad[y-1][x] != ' ') { y--; } break;
-        case 'D': if (pad[y+1][x] != ' ') { y++; } break;
-        default:
-          fprintf(stderr, "Unexpected character in instructions: %c\n", chr);
-          return 1;
-      }
-    }
-  }
+  go();
   printf("\n");
 
   fclose(fp);
