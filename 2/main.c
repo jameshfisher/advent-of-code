@@ -51,7 +51,62 @@ desk. What is the bathroom code?
 
 */
 
-int main(void)
+#include <stdio.h>
+#include <stdbool.h>
+
+int main(int argc, char* argv[])
 {
+  if (argc < 2)
+  {
+    fprintf(stderr, "Usage:  %s input_filename\n", argv[0]);
+    return 1;
+  }
+
+  FILE* fp = fopen("input.txt", "r");
+
+  if (fp == NULL)
+  {
+    fprintf(stderr, "Input file does not exist!\n");
+    return 1;
+  }
+
+  int x = 0;
+  int y = 0;
+
+  char pad[3][3] = {
+    { '1', '2', '3' },
+    { '4', '5', '6' },
+    { '7', '8', '9' }
+  };
+
+  printf("The code is: ");
+  while (true)
+  {
+    char chr = fgetc(fp);
+
+    if (chr == EOF)
+    {
+      break;
+    }
+    else
+    {
+      switch (chr) {
+        case '\n':
+          printf("%c", pad[y+1][x+1]);
+          break;
+        case 'L': x = x == -1 ? -1 : x-1; break;
+        case 'R': x = x ==  1 ?  1 : x+1; break;
+        case 'U': y = y == -1 ? -1 : y-1; break;
+        case 'D': y = y ==  1 ?  1 : y+1; break;
+        default:
+          fprintf(stderr, "Unexpected character in instructions: %c\n", chr);
+          return 1;
+      }
+    }
+  }
+  printf("\n");
+
+  fclose(fp);
+
   return 0;
 }
