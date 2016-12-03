@@ -56,18 +56,19 @@ int main(void)
   int c3[3];
 
   while (
-    scanf("%d %d %d", &c1[0], &c2[0], &c3[0]) == 3  &&
-    scanf("%d %d %d", &c1[1], &c2[1], &c3[1]) == 3  &&
-    scanf("%d %d %d", &c1[2], &c2[2], &c3[2]) == 3
+    scanf(
+      "%d %d %d %d %d %d %d %d %d",
+      &c1[0], &c2[0], &c3[0],
+      &c1[1], &c2[1], &c3[1],
+      &c1[2], &c2[2], &c3[2]
+    ) == 9
   )
   {
     qsort(c1, 3, sizeof(int), &gt);
     qsort(c2, 3, sizeof(int), &gt);
     qsort(c3, 3, sizeof(int), &gt);
 
-    if (c1[0] + c1[1] > c1[2]) { possible++; }
-    if (c2[0] + c2[1] > c2[2]) { possible++; }
-    if (c3[0] + c3[1] > c3[2]) { possible++; }
+    possible += (c1[0]+c1[1] > c1[2]) + (c2[0]+c2[1] > c2[2]) + (c3[0]+c3[1] > c3[2]);
   }
 
   printf("The number of possible triangles is: %d\n", possible);
