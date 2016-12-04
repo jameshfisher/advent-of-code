@@ -66,9 +66,9 @@ void free_room(room r)
 }
 
 // returns C-string
-char* encrypted_name_checksum(char* encrypted_name)
+char* encrypted_name_checksum(char_const_ptr encrypted_name)
 {
-  int* encrypted_name_vec = calloc(26, sizeof(int));
+  int * const encrypted_name_vec = calloc(26, sizeof(int));
 
   int c;
 
@@ -109,19 +109,19 @@ char* encrypted_name_checksum(char* encrypted_name)
 
 bool room_has_valid_checksum(room p)
 {
-  char* computed_checksum = encrypted_name_checksum(p.encrypted_name);
-  bool eq = strcmp(p.checksum, computed_checksum) == 0;
+  char* const computed_checksum = encrypted_name_checksum(p.encrypted_name);
+  bool const eq = strcmp(p.checksum, computed_checksum) == 0;
   free(computed_checksum);
   return eq;
 }
 
 // assumes room has valid checksum
-char* name_of_room(room * p)
+char* name_of_room(room const * const p)
 {
-  char* decrypted_name = strdup(p->encrypted_name);
+  char* const decrypted_name = strdup(p->encrypted_name);
   assert(decrypted_name != NULL);
 
-  int sector_id = p->sector_id;
+  int const sector_id = p->sector_id;
 
   for (int i = 0; decrypted_name[i] != '\0'; i++)
   {
@@ -132,7 +132,7 @@ char* name_of_room(room * p)
   return decrypted_name;
 }
 
-room parse_room(char* line)
+room parse_room(char * const line)
 {
   room r;
 
