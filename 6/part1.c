@@ -63,10 +63,7 @@ int main(void)
     {
       int c = line_buffer[i] - 'a';
       assert(0 <= c && c < 26);
-      if (c != '\n')
-      {
-        counters[i][c]++;
-      }
+      counters[i][c]++;
     }
 
     size_t new_line_length = getline(&line_buffer, &line_buffer_size, stdin);
