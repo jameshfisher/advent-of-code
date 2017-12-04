@@ -169,7 +169,7 @@ int main(void)
     }
   }
 
-  printf("Number of pixels lit: %llu\n", lit);
+  print_screen();
 
   return EXIT_SUCCESS;
 }

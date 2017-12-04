@@ -142,12 +142,25 @@ int main(int argc, char* argv[])
   set_dist(1, 1, 0);  // 0 steps from current location
   last_dist = 0;
 
-  while (get_dist(31,39) == UNKNOWN_DIST)
+  while (last_dist < 50)
   {
     iter_grid();
   }
 
-  printf("Distance to (31,39) is: %d\n", get_dist(31,39));
+  int num_reachable = 0;
+  TIMES (x, width)
+  {
+    TIMES (y, width)
+    {
+      int dist = get_dist(x,y);
+      if (dist != UNKNOWN_DIST && dist <= 50)
+      {
+        num_reachable++;
+      }
+    }
+  }
+
+  printf("Number of cells reachable in at most 50 steps: %d\n", num_reachable);
 
   return EXIT_SUCCESS;
 }

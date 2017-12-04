@@ -42,18 +42,32 @@ triangles are possible?
 #include <stdio.h>
 #include <stdlib.h>
 
-int gt(const void * a, const void * b)
+typedef int int_3_arr[3];
+
+void order(int* a, int* b)
 {
-  return *((int*) a) > *((int*) b);
+  if (*a > *b)
+  {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+  }
+}
+
+void sort(int_3_arr* l)
+{
+  order(&l[0], &l[1]);
+  order(&l[1], &l[2]);
+  order(&l[0], &l[1]);
 }
 
 int main(void)
 {
   int possible = 0;
 
-  int c1[3];
-  int c2[3];
-  int c3[3];
+  int_3_arr c1;
+  int_3_arr c2;
+  int_3_arr c3;
 
   while (
     scanf(
@@ -64,9 +78,9 @@ int main(void)
     ) == 9
   )
   {
-    qsort(c1, 3, sizeof(int), &gt);
-    qsort(c2, 3, sizeof(int), &gt);
-    qsort(c3, 3, sizeof(int), &gt);
+    sort(&c1);
+    sort(&c2);
+    sort(&c3);
 
     possible += (c1[0]+c1[1] > c1[2]) + (c2[0]+c2[1] > c2[2]) + (c3[0]+c3[1] > c3[2]);
   }
