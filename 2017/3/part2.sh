@@ -82,7 +82,7 @@ function move {
     add_square $((x))   $((y-1))
     add_square $((x+1)) $((y-1))
     var_name=mem_${x/-/n}_${y/-/n}
-    declare -ri "$var_name=$square_val"
+    readonly $var_name=$square_val
     if [ "$target_number" -lt "$square_val" ]; then
       printf 'First larger value: %d\n' "$square_val"
       exit
